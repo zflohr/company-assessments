@@ -32,22 +32,18 @@ class GoogleDocHTMLParser(HTMLParser):
     @override
     def handle_data(self, data: str) -> None:
         """Process content of <span> HTML elements."""
-        char_positions = {}
-        if self._tag == "span":
-            if data.isdigit() or not data.isascii():
-                if data.isdigit():
-                    data = int(data)
-                if len(self.table_entries[-1]) < 3:
-                    self.table_entries[-1].append(data)
-                else:
-                    self.table_entries.append([data])
+        if self._tag == "span" and (data.isdigit() or not data.isascii()):
+            data = int(data) if data.isdigit() else data
+            self.table_entries[-1].append(data) if (
+                len(self.table_entries[-1]) < 3) else (
+                    self.table_entries.append([data]))
 
 def print_google_doc_characters(url: str) -> None:
     """Print Unicode characters from Google Doc HTML input data.
 
     Fetch Google Doc HTML data from url, parse the HTML, and print
     Unicode characters that are stored as HTML table data to stdout at
-    positions that correspond to the characters' x- and y-coordinates.
+    positions that correspond to the their x- and y-coordinates.
 
     Args:
         url: A Google Doc URL.
